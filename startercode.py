@@ -242,6 +242,24 @@ def recommend_breeds_in_same_group(breed_name, cache_file):
     if not target_group:
         return f"No group information available for '{target_name}'."
 
+    # collect other breeds in same group
+    results = []
+
+    for entry in cache.values():
+        try:
+            name = entry["data"]["attributes"]["name"]
+            group_id = entry["data"]["relationships"]["group"]["data"]["id"]
+
+            if group_id == target_group and name != target_name:
+                results.append(name)
+        except:
+            continue
+
+    if not results:
+        return f"No recommendations found based on '{target_name}'."
+
+    return sorted(results)
+
 
 class TestHomeworkDogAPI(unittest.TestCase):
     def setUp(self):
